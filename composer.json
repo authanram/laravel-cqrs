@@ -1,7 +1,7 @@
 {
     "name": "authanram/laravel-cqrs",
     "type": "package",
-    "description": "...",
+    "description": "A simple (to use) Command and Query Responsibility Segregation (CQRS) implementation for Laravel.",
     "keywords": [
         "authanram",
         "laravel",
