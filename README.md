@@ -42,9 +42,6 @@ on how to report security vulnerabilities.
 - [Daniel Seuffer](https://github.com/authanram)
 - [and Contributors](https://github.com/authanram/laravel-cqrs/graphs/contributors) &nbsp;❤️
 
-Special thanks to [Caleb Porzio](https://github.com/calebporzio), the author of the underlying
-package [Sushi 🍣](https://github.com/calebporzio/sushi).
-
 ## License
 
 The MIT License (MIT). Please see [License File](https://github.com/authanram/laravel-cqrs/blob/master/LICENSE.md)
