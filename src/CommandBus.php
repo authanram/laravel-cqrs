@@ -6,8 +6,11 @@ namespace Authanram\LaravelCqrs;
 
 final class CommandBus extends MessageBus implements Contracts\CommandBus
 {
-    public static function type(): string
+    /**
+     * @throws Exceptions\MessageResolutionException
+     */
+    public function send(object $message): void
     {
-        return 'command';
+        $this->handle($message);
     }
 }

@@ -35,7 +35,7 @@ it('registers messages', function (): void {
 
     expect($messagesProperty->getValue($this->messageBus))
         ->toEqual([
-            Command::class => new CommandHandler(),
+            Command::class => CommandHandler::class,
             CommandOther::class => $messageHandler,
         ]);
 });

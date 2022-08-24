@@ -6,4 +6,5 @@ namespace Authanram\LaravelCqrs\Contracts;
 
 interface QueryBus extends MessageBus
 {
+    public function send(object $message): mixed;
 }

@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Authanram\LaravelCqrs;
 
-use Error;
 use Illuminate\Support\Facades\Log;
-use TypeError;
 
 /**
  * @method static void alert(string $message, array $context = [])
@@ -18,55 +16,32 @@ use TypeError;
  * @method static void notice(string $message, array $context = [])
  * @method static void warning(string $message, array $context = [])
  */
-final class Logger
+final class Logger implements Contracts\Logger
 {
-    /**
-     * @throws Error
-     */
-    public static function __callStatic(string $function, array $arguments)
+    public function command(): self
     {
-        if (in_array($function, self::levels(), true) === false) {
-            throw new Error(
-                sprintf(
-                    'Call to undefined method %s',
-                    self::class.'::'.$function.'()',
-                ),
-            );
-        }
+        self::setup(config('laravel-cqrs.logging.command'));
 
-        if (isset($arguments[0]) === false) {
-            throw new TypeError(
-                sprintf(
-                    'Too few arguments to function %s, %s passed.',
-                    self::class.'::'.$function.'()',
-                    count($arguments),
-                ),
-            );
-        }
-
-        self::log($arguments[0], $arguments[1] ?? [], $function);
+        return $this;
     }
 
-    private static function log(string $message, array $context = [], string $level = 'info'): void
+    public function query(): self
     {
-        $config = config('laravel-cqrs.logging');
+        self::setup(config('laravel-cqrs.logging.query'));
 
-        $config['stack'][] = Log::build($config['channel']);
-
-        Log::stack($config['stack'])->{$level}($message, $context);
+        return $this;
     }
 
-    private static function levels(): array
+    public function __call(string $name, array $arguments)
     {
-        return [
-            'alert',
-            'critical',
-            'debug',
-            'emergency',
-            'error',
-            'info',
-            'notice',
-            'warning',
-        ];
+        Log::{$name}($arguments[0], $arguments[1] ?? []);
+    }
+
+    private static function setup(array $config): void
+    {
+        Log::stack(
+            channels: $config['stack'],
+            channel: $config['channel'],
+        );
     }
 }

@@ -6,7 +6,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Log Channel
+    | Log Channels
     |--------------------------------------------------------------------------
     |
     | ...
@@ -15,12 +15,23 @@ return [
 
     'logging' => [
 
-        'channel' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/laravel-cqrs.log'),
+        'command' => [
+            'channel' => [
+                'driver' => 'daily',
+                'path' => storage_path('logs/laravel-cqrs-command.log'),
+            ],
+
+            'stack' => [],
         ],
 
-        'stack' => [],
+        'query' => [
+            'channel' => [
+                'driver' => 'daily',
+                'path' => storage_path('logs/laravel-cqrs-query.log'),
+            ],
+
+            'stack' => [],
+        ]
 
     ],
 

@@ -34,7 +34,7 @@ it('registers messages', function (): void {
 
     expect($messagesProperty->getValue($this->messageBus))
         ->toEqual([
-            Query::class => new QueryHandler(),
+            Query::class => QueryHandler::class,
             QueryOther::class => $messageHandler,
         ]);
 });

@@ -6,8 +6,11 @@ namespace Authanram\LaravelCqrs;
 
 final class QueryBus extends MessageBus implements Contracts\QueryBus
 {
-    public static function type(): string
+    /**
+     * @throws Exceptions\MessageResolutionException
+     */
+    public function send(object $message): mixed
     {
-        return 'query';
+        return $this->handle($message);
     }
 }

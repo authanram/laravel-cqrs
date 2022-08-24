@@ -14,7 +14,7 @@ beforeEach(function () {
 
 it('throws if message class does not exist', function (): void {
     $this->service->register('foo', 'bar');
-})->expectException(Exceptions\MessageNotFoundException::class);
+})->expectException(Exceptions\ClassNotFoundException::class);
 
 it('throws if message handler class does not exist', function (): void {
     $this->service->register(Command::class, 'bar');

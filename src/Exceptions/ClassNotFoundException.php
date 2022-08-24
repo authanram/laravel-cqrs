@@ -6,6 +6,6 @@ namespace Authanram\LaravelCqrs\Exceptions;
 
 use Exception;
 
-final class MessageNotFoundException extends Exception
+final class ClassNotFoundException extends Exception
 {
 }

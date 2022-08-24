@@ -10,7 +10,10 @@ final class LaravelCqrsServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(Contracts\Logger::class, Logger::class);
+
         $this->app->singleton(Contracts\CommandBus::class, CommandBus::class);
+
         $this->app->singleton(Contracts\QueryBus::class, QueryBus::class);
     }
 

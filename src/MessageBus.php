@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Authanram\LaravelCqrs;
 
-use Authanram\LaravelCqrs\Exceptions\MessageNotFoundException;
-use Authanram\LaravelCqrs\Exceptions\MessageResolutionException;
+use Authanram\LaravelCqrs\Contracts\Logger;
+use Authanram\LaravelCqrs\Exceptions\ClassNotFoundException;
 use Authanram\LaravelCqrs\Exceptions\HandlerNotFoundException;
 use Authanram\LaravelCqrs\Exceptions\InvalidHandlerException;
+use Authanram\LaravelCqrs\Exceptions\MessageResolutionException;
 use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionException;
@@ -17,13 +18,25 @@ abstract class MessageBus implements Contracts\MessageBus
 {
     protected array $messages = [];
 
+    private static function type(): string
+    {
+        return Str::of(class_basename(static::class))
+            ->beforeLast('Bus')
+            ->kebab()
+            ->toString();
+    }
+
+    public function __construct(private Logger $logger)
+    {
+    }
+
     public function register(string $message, callable|string $handler): self
     {
         self::authorizeMessage($message);
 
         self::authorizeHandler($message, $handler);
 
-        $this->messages[$message] = is_callable($handler) ? $handler : new $handler;
+        $this->messages[$message] = $handler;
 
         return $this;
     }
@@ -31,7 +44,7 @@ abstract class MessageBus implements Contracts\MessageBus
     /**
      * @throws MessageResolutionException
      */
-    public function send(object $message): mixed
+    protected function handle(object $message): mixed
     {
         $handler = $this->messages[$message::class] ?? null;
 
@@ -44,19 +57,23 @@ abstract class MessageBus implements Contracts\MessageBus
             );
         }
 
+        if (is_callable($handler) === false) {
+            $handler = new $handler;
+        }
+
         return ($handler($message)) ?? null;
     }
 
     /**
-     * @throws MessageNotFoundException
+     * @throws ClassNotFoundException
      */
     private static function authorizeMessage(string $message): void
     {
         if (class_exists($message) === false) {
-            throw new MessageNotFoundException(
+            throw new ClassNotFoundException(
                 sprintf(
                     '%s not found: %s',
-                    Str::studly(static::type()),
+                    Str::studly(self::type()),
                     $message,
                 )
             );
@@ -64,9 +81,9 @@ abstract class MessageBus implements Contracts\MessageBus
     }
 
     /**
-     * @throws ReflectionException
-     * @throws HandlerNotFoundException
      * @throws InvalidHandlerException
+     * @throws HandlerNotFoundException
+     * @throws ReflectionException
      */
     private static function authorizeHandler(string $message, callable|string $handler): void
     {
